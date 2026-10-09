@@ -46,7 +46,8 @@ end
 `save_states = :all` saves saturation and pressure for every report step;
 `:final` saves only the last step (for sweeps, ~20 MB less per run).
 """
-function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output"), save_states = :all)
+function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output"), save_states = :all,
+        sim_kw = (;))
     case = setup_case(sec, cs)
     (; model, state0, parameters, forces, forces_shut, dt, regions, pc_tables, edge) = case
     p0 = state0[:Reservoir][:Pressure]
@@ -64,8 +65,9 @@ function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output")
 
     # 2. Injection and migration.
     t_start = time()
-    ws, states, t = simulate_reservoir(state0, model, dt,
-        parameters = parameters, forces = forces, max_timestep = 90day, info_level = -1)
+    ws, states, t = simulate_reservoir(state0, model, dt;
+        parameters = parameters, forces = forces, info_level = -1,
+        merge((max_timestep = 90day,), sim_kw)...)
     @printf("Simulation wall time: %.1f min\n", (time() - t_start) / 60)
 
     # 3. CO2 accounting. Regions partition the model; CO2 that has left the

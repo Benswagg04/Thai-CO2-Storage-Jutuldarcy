@@ -28,13 +28,14 @@ Entry drive at the fault with a sealing fault (Pe ≥ 1.7):
 - End-of-injection peak: 1.74, 1.71 and 1.54 bar for the three permeability levels. A more permeable fault lets brine through and relieves pressure.
 
 ## Interpretation
-Three regimes, set by where the fault's entry pressure sits relative to the CO2 pressure acting on it.
+Three approximate regimes, set by where the fault's entry pressure sits relative to the CO2 pressure acting on it. The boundaries between them are not universal thresholds: they depend on the fault properties, the injection conditions and the numerical model, and the transitions are gradual rather than sharp.
 
 1. **Pe below the buoyancy drive (≲ 0.9 bar): persistent leakage.**
    - CO2 enters during injection and keeps leaking afterwards, driven by buoyancy alone. Leakage grows 1.5–5× between year 25 and 100.
    - The column bleeds down toward the height the fault can hold, so the drive falls with time.
-2. **Pe between the buoyancy drive and the injection peak (≈ 1.0–1.7 bar): injection-triggered leakage.**
-   - The fault is breached only while injection overpressure adds to buoyancy. Leakage stops when injection stops: year-25 and year-100 values agree to within a few hundredths of a percent.
+2. **Pe between the buoyancy drive and the injection peak (≈ 1.0–1.7 bar): injection-triggered fault invasion.**
+   - The fault is invaded only while injection overpressure adds to buoyancy. After injection, the CO2 leaving the storage formation shows a negligible further increase: year-25 and year-100 values agree to within a few hundredths of a percent.
+   - **Correction (Step 3b):** this does *not* mean migration stops. At Pe = 1.2 bar, the CO2 already inside the fault keeps moving up past the top of the seal after injection. Cumulative net crossing of the seal rises from 145 t (year 25) to 162 t (year 100). Entry into the fault stops; redistribution of what entered does not.
    - The width of this window equals the injection overpressure at the fault, so it depends on how the site is operated (rate, duration), not just on fault properties.
    - Pe = 1.0–1.1 bar is marginal: the post-injection drive (~1.07–1.09 bar) is only slightly above Pe. Flow nearly stops, because the fault's own Pc rises as CO2 enters it, and CO2 cannot flow until it exceeds the critical saturation (0.05).
 3. **Pe above the injection peak (≳ 1.7 bar): the capillary seal holds.**

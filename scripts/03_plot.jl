@@ -49,8 +49,9 @@ for (col, (step, title)) in enumerate([(25, "End of injection (year 25)"), (100,
     end
     col == 1 && axislegend(ax, position = :rt, labelsize = 10)
 end
-Label(fig[2, 1:2], "Grey band: entry drive at the fault with a sealing fault, from buoyancy alone after injection " *
-    "($(round(drive_post, digits = 2)) bar) to the end-of-injection peak ($(round(drive_peak, digits = 2)) bar).", fontsize = 11)
+Label(fig[2, 1:2], "Grey band: approximate reference range of the entry drive with a sealing fault, from buoyancy alone after injection " *
+    "($(round(drive_post, digits = 2)) bar) to the end-of-injection peak ($(round(drive_peak, digits = 2)) bar). Specific to this scenario, not a universal threshold.\n" *
+    "Values near zero at high entry pressure are dissolved CO₂ carried by brine (no free CO₂ enters the fault).", fontsize = 11)
 save(joinpath(figdir, "03_leakage_vs_entry_pressure.png"), fig)
 
 # 2. Time series for the middle permeability level.
@@ -59,7 +60,7 @@ fig = Figure(size = (1150, 440))
 ax1 = Axis(fig[1, 1], title = "CO₂ outside the storage formation, $(klabel(kmid))",
     xlabel = "Years", ylabel = "% of injected")
 ax2 = Axis(fig[1, 2], title = "Entry drive at the fault (dashed: entry pressure)",
-    xlabel = "Years", ylabel = "bar")
+    xlabel = "Years", ylabel = "p_CO₂(sand) − p_brine(fault), bar")
 pes = [pe for pe in pe_values if haskey(R, (pe, kmid)) && pe <= 2.0]
 cmap = cgrad(:viridis, max(length(pes), 2), categorical = true)
 for (i, pe) in enumerate(pes)
@@ -70,6 +71,8 @@ for (i, pe) in enumerate(pes)
 end
 vlines!(ax1, [25], color = :gray, linestyle = :dot); vlines!(ax2, [25], color = :gray, linestyle = :dot)
 Legend(fig[1, 3], ax1, labelsize = 10)
+Label(fig[2, 1:3], "Entry drive = CO₂ pressure in the storage-sand cell next to the fault minus brine pressure in the adjacent fault cell " *
+    "(simulated values; includes buoyancy and injection overpressure). Maximum over the sand cells touching the fault.", fontsize = 11)
 save(joinpath(figdir, "03_time_series.png"), fig)
 
 # 3. Final CO2 saturation for three entry pressures at the middle permeability.

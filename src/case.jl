@@ -152,9 +152,12 @@ function setup_case(sec, cs = case_spec())
     dt = fill(1.0yr, cs.inject_years + cs.post_years)
     forces = vcat(fill(forces_inj, cs.inject_years), fill(forces_shut, cs.post_years))
 
-    push!(reservoir_model(model).output_variables, :TotalMasses)
+    outvars = reservoir_model(model).output_variables
+    push!(outvars, :TotalMasses)
+    push!(outvars, :PhaseMobilities)   # needed to recompute boundary fluxes afterwards
+    unique!(outvars)
     return (; model, state0, parameters, forces, forces_shut, dt, domain,
-        regions = region_cells(sec), cs, pc_tables, edge, top)
+        regions = region_cells(sec), cs, pc_tables, edge, top, bc)
 end
 
 """
