@@ -40,7 +40,13 @@ function fault_diagnostics(sec, states, p0, pc_tables)
     return (; drive, overpressure_fault = over, dp_max)
 end
 
-function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output"))
+"""
+    run_case(name, sec, cs; output_dir, save_states = :all)
+
+`save_states = :all` saves saturation and pressure for every report step;
+`:final` saves only the last step (for sweeps, ~20 MB less per run).
+"""
+function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output"), save_states = :all)
     case = setup_case(sec, cs)
     (; model, state0, parameters, forces, forces_shut, dt, regions, pc_tables, edge) = case
     p0 = state0[:Reservoir][:Pressure]
@@ -95,7 +101,8 @@ function run_case(name, sec, cs; output_dir = joinpath(@__DIR__, "..", "output")
 
     mkpath(output_dir)
     out = joinpath(output_dir, "$name.jls")
-    serialize(out, (; t, states = [Dict(:Saturations => s[:Saturations], :Pressure => s[:Pressure]) for s in states],
+    kept = save_states == :all ? states : states[end:end]
+    serialize(out, (; t, states = [Dict(:Saturations => s[:Saturations], :Pressure => s[:Pressure]) for s in kept],
         inventory, acc, exited, edge_co2, diag, p0, cs, spec = sec.spec))
     println("Saved $out\n")
     return (; ws, states, t, inventory, acc, exited, diag)
