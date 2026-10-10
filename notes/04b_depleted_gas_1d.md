@@ -23,7 +23,7 @@ Scripts: `src/gas.jl`, `scripts/04b_depletion_1d.jl`. Figure: `figures/04b_deple
 |---|---|
 | Component mass conservation (well flows integrated over every ministep) | CO2, CH4 and water all within 1–3 × 10⁻⁶ of initial + injected |
 | p/Z material balance during depletion | Within 0.012% (year 1) to 0.122% (year 10) of the closed-tank line p/Z = (p/Z)_i (1 − G_p/G) |
-| Explanation of the p/Z drift | Expansion of connate water as pressure falls takes up gas volume. The simple p/Z equation ignores this. Predicted size c_w Δp S_w/(1 − S_w) = 4.5e-10 × 108e5 × 0.25 = 0.12%, matching the 0.122% simulated. |
+| Explanation of the p/Z drift | Expansion of connate water as pressure falls takes up gas volume. The simple p/Z equation ignores this; rock compressibility is zero in this model, so no further correction is needed. Predicted size c_w Δp S_w/(1 − S_w) with c_w = 4.5e-10 1/Pa, Δp = 150 − 42.1 = 107.9 bar, S_w = 0.2: 4.5e-10 × 1.079e7 × 0.25 = 0.121%, vs 0.122% simulated. The same estimate matches every year of the decline (e.g. year 5: Δp = 53.7 bar → 0.060%, simulated 0.060%). |
 | Phase state | Single gas phase throughout |
 | Production rate | 20,007.5 t over 10 years vs 20,000 t target |
 
@@ -36,8 +36,8 @@ The p/Z test is an independent check: the line comes from classical gas reservoi
   - **producer:** volume at standard conditions (1 atm, 15 °C) from a flash of the produced fluid. A target of "2,000" first produced 1,361 t/yr; the ratio 1.47 m³/kg is the standard volume of 1 kg of methane. The producer target is now converted with the PR standard-condition density.
 
 ## Results
-- Average pressure falls from 150 to 42 bar over 10 years of production (20,000 t CH4). It returns to about 150 bar after 80,000 t of CO2 has been injected.
-  - In mass terms, the depleted field takes about **4× more CO2 than the CH4 produced**, because CO2 is about 4× denser than CH4 at these conditions (344 vs 85 kg/m³ at 150 bar).
+- Average pressure falls from 150 to 42 bar over 10 years of production (20,000 t CH4). In this closed 1D numerical experiment, injecting 80,000 t of CO2 afterwards restored the pressure to about its original value (150.4 / 150.2 bar on the 100- / 400-cell grids).
+  - The ~4:1 mass ratio is specific to this model and its operating conditions (residual CH4, pressure, temperature, water saturation, compressibilities). It is consistent with a first-order voidage-replacement estimate (CO2 at 344 kg/m³ vs CH4 at 85 kg/m³ at 150 bar, 95 °C), but it is not a general storage-capacity relationship.
 - CO2 displaces CH4 as a front, with a mixing zone between them (numbers below).
 - Nothing changes during the final shut-in: there is no diffusion and no gravity in this 1D model.
 
@@ -50,8 +50,12 @@ The p/Z test is an independent check: the line comes from classical gas reservoi
 
 - The front position is robust (735–742 m).
 - The width is **numerical dispersion from both space and time discretisation.** Refining cells 4× narrows it by only 26% at a fixed time step; cutting the time step 10× narrows it a further 40%. Fully implicit time stepping smears fronts just as coarse cells do.
-- Physical mixing in this model would come only from molecular diffusion, which is not included. Even if it were, √(Dt) with D ~ 1e-7 m²/s (gas, high pressure) over 10 years is about 5 m. The simulated mixing zones (60–140 m) are therefore **10–30× wider than physical**.
-- This matters for quantities controlled by mixing: CO2 breakthrough at a producer (CO2-enhanced gas recovery), contamination of residual CH4, and the CO2 content of any back-produced gas. It matters little for pressure recovery and total storage capacity.
+- The model contains no physical mixing process: neither molecular diffusion nor mechanical dispersion. The simulated width is therefore controlled by numerical dispersion, and **the physically realistic mixing width remains uncertain**.
+  - Molecular diffusion alone would give a few metres over 10 years (√(Dt), D ~ 1e-7 m²/s).
+  - Field-scale mechanical dispersion (dispersivity × velocity) is not modelled and could be comparable to the simulated widths.
+  - *(Earlier draft said "10–30× wider than physical"; withdrawn after review, because it compared against diffusion only.)*
+- Effect on pressure: when the mixing zone narrowed from 138 m to 102 m (grid refinement), the end-of-injection average pressure changed from 150.43 to 150.15 bar (0.2%). Small in this case, but not zero: mixing changes mixture density and compressibility.
+- Larger effects are expected on quantities controlled by mixing: CO2 breakthrough at a producer, contamination of residual CH4, and the CO2 content of any back-produced gas.
 
 ## What this does and does not show
 - Shows: the three-phase compositional set-up works in JutulDarcy 0.3.10, conserves mass, and reproduces classical gas material balance to within a physically explained 0.1%.
