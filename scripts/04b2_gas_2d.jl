@@ -104,8 +104,12 @@ Production at the crest well, shut-in, CO2 injection through the same well,
 then a long shut-in. Identical inputs except gravity.
 """
 function gravity_case(gravity; prod_t_per_yr = 1500.0, inj_t_per_yr = 6000.0,
-        years = (deplete = 10, shut1 = 1, inject = 10, shut2 = 30))
+        years = (deplete = 10, shut1 = 1, inject = 10, shut2 = 30), sim_kw = (;), dz_max = nothing)
     m = build_model(gravity = gravity)
+    if !isnothing(dz_max)
+        # Limit on the change of overall mole fractions per Newton iteration (default 0.1).
+        replace_variables!(reservoir_model(m.model), OverallMoleFractions = JutulDarcy.OverallMoleFractions(dz_max = dz_max))
+    end
     s0 = initial_state(m, gravity = gravity)
     off = DisabledControl()
     f_dep = setup_reservoir_forces(m.model, control = Dict(:Well => gas_producer_control(prod_t_per_yr, EOS)),
@@ -117,15 +121,18 @@ function gravity_case(gravity; prod_t_per_yr = 1500.0, inj_t_per_yr = 6000.0,
     dt = vcat([fill(1.0yr, n) for (n, _) in phases]...)
     forces = vcat([fill(f, n) for (n, f) in phases]...)
     t0 = time()
-    res = simulate_reservoir(s0, m.model, dt, parameters = m.parameters, forces = forces,
-        info_level = -1, max_timestep = 30day, output_substates = true)
+    res = simulate_reservoir(s0, m.model, dt; parameters = m.parameters, forces = forces,
+        info_level = -1, output_substates = true, merge((max_timestep = 30day,), sim_kw)...)
     wall = (time() - t0) / 60
     ws, states, t = res
     _, dts, report_ix = Jutul.expand_to_ministeps(res.result)
     reps = res.result.reports
     mini = [mm for r in reps for mm in r[:ministeps]]
+    cuts_per_year = [count(mm -> !mm[:success], r[:ministeps]) for r in reps]
+    newton = sum(mm -> haskey(mm, :steps) ? length(mm[:steps]) : mm[:stats].newtons, mini)
     return (; m, s0, M0 = s_init[1][:TotalMasses], ws, states, t, dts, report_ix, years, wall,
-        n_ok = count(mm -> mm[:success], mini), n_cut = count(mm -> !mm[:success], mini))
+        n_ok = count(mm -> mm[:success], mini), n_cut = count(mm -> !mm[:success], mini),
+        cuts_per_year, newton, min_dt = minimum(dts))
 end
 
 function report_gravity(r, label)
@@ -196,6 +203,8 @@ function gravity_compare()
     println("\nSaved figures/04b2_gravity.png, figures/04b2_segregation.png")
 end
 
-group = isempty(ARGS) ? "stability" : ARGS[1]
-group == "stability" && stability()
-group == "gravity" && gravity_compare()
+if abspath(PROGRAM_FILE) == @__FILE__
+    group = isempty(ARGS) ? "stability" : ARGS[1]
+    group == "stability" && stability()
+    group == "gravity" && gravity_compare()
+end
