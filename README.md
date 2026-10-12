@@ -15,7 +15,8 @@ A sequence of small, reproducible reservoir simulations in [JutulDarcy.jl](https
 | 4A | Søreide–Whitson equation of state for CO2–CH4–brine (standalone) | CO2 solubility vs JutulDarcy's CO2-brine correlations; weak salting-out; Peng–Robinson brine density 15–19% low; a CH4 term discrepancy in the installed version, already fixed upstream | [04a](notes/04a_flash_benchmark.md) |
 | 4B stage 1 | 1D depleted gas reservoir (CO2–CH4 Peng–Robinson, immiscible brine) | Mass conserved to ~1e-6; p/Z material balance within 0.12%, explained by connate-water expansion; mixing zone controlled by numerical dispersion | [04b](notes/04b_depleted_gas_1d.md) |
 | 4B stage 2 | 2D gas–water reservoir: equilibrium and gravity | Stable initial state; CO2-rich gas collects beneath CH4 with gravity on (CO2–CH4 mean-depth difference +13 m vs −11 m with gravity off) | [04b2](notes/04b2_gas_2d.md) |
-| 4B stage 2c | Faulted depleted gas field | *In progress* | |
+| 4C | Capillary pressure in the three-phase compositional model | Sign convention, phase ordering and per-rock-type curves verified (equilibrium slope ratio 0.9996; barrier holds and breaks at the predicted column heights) | [04c](notes/04c_pc_check.md) |
+| 4B stage 2c | Faulted depleted methane field: production, then CO2 injection, with methane vs CO2-scaled capillary curves and a no-injection control | Depletion draws ~18,000 m³ of water into the trap, largely through the fault. During injection the fault's pore pressure lags the gas pressure (residual water in the gas zone is immobile; the 0.01 mD fault drains slowly), so gas crosses the fault while the reservoir is still ~28 bar below its original pressure. The control moves no gas; CO2-scaled capillary curves increase leakage (+15% with a one-cell fault, +41% with the fault resolved by 10 columns); capping injection at the original pressure reduces but does not stop it. A single 10 m fault cell overestimates leakage by 19–45% | [04d](notes/04d_fault_gas.md) |
 
 <p align="center"><img src="figures/03_leakage_vs_entry_pressure.png" width="85%"></p>
 
@@ -29,6 +30,8 @@ A sequence of small, reproducible reservoir simulations in [JutulDarcy.jl](https
 
 ## Known limitations (see each step's notes)
 - Leakage magnitudes carry roughly ±25% grid sensitivity; trapping fractions are grid-dependent and are not reported as results.
+- Steps 2–4 represent the 10 m fault zone with one cell across. Stage 4B-2c shows this overestimates leakage by 19–45% in the depleted-field case (5 and 10 fault columns tested), so the Step 2–3 leakage magnitudes are probably overestimated too and should be rechecked with a resolved fault (`section_spec(fault_subcells = …)`).
+- JutulDarcy's mass-balance tolerance is relative to the whole model's mass (mostly brine); minor components need a tighter `tol_mb` (1e-9 is used in stage 4B-2c).
 - JutulDarcy 0.3.10's open boundary flux ignores gravity across the half cell and capillary pressure.
 - No molecular diffusion or mechanical dispersion; mixing widths are numerical.
 - Capillary pressure is one scalar curve per cell (no directional entry pressure in the fault).
@@ -45,6 +48,11 @@ julia --project=. scripts/03b_verify.jl flux     # also: rate, dt, grid (grid is
 julia --project=. scripts/04a_flash_benchmark.jl
 julia --project=. scripts/04b_depletion_1d.jl
 julia --project=. scripts/04b2_gas_2d.jl stability
+julia --project=. scripts/04c_pc_check.jl
+julia --project=. scripts/04d_fault_gas.jl runs        # depletion + branches a, b, c (~40 min)
+julia --project=. scripts/04d_fault_gas.jl runs_bhp    # pressure-capped branches (~50 min)
+julia --project=. scripts/04d_fault_gas.jl runs_fault5 # fault-resolution test (also runs_fault10)
+julia --project=. scripts/04d_report.jl
 ```
 
 Simulation outputs (`output/`) are not version-controlled; figures and summary tables are.
@@ -56,4 +64,7 @@ Simulation outputs (`output/`) are not version-controlled; figures and summary t
 - `results/`, `figures/`: summary tables and figures (`figures/superseded/`: first-configuration figures from Steps 2–2b)
 
 ## Acknowledgements
-JutulDarcy.jl and Jutul.jl (SINTEF Digital); MultiComponentFlash.jl. Code developed with the help of an AI assistant (Claude); all modelling choices, checks and interpretations are documented in `notes/`.
+JutulDarcy.jl and Jutul.jl (SINTEF Digital); MultiComponentFlash.jl.
+
+## License
+MIT (see `LICENSE`).

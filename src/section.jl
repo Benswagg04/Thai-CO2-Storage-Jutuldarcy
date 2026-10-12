@@ -32,16 +32,19 @@ const FAULT_FACIES = 5
 
 All geometric inputs in one place, in metres. `layer_bottoms` gives the depth
 below the top surface of the base of each footwall layer (top to bottom).
-`fault_x` is the x-interval occupied by the fault zone.
+`fault_x` is the x-interval occupied by the fault zone. `fault_subcells` splits
+each core column inside the fault zone into that many equal columns, to resolve
+the pressure profile across the fault (1 = one cell across a 10 m fault, as in
+Steps 1–3).
 """
 section_spec(; dx = 10.0, dz = 2.0, Lx = 1200.0, Ly = 100.0, Lz = 120.0,
     top_depth = 1500.0, dip_deg = 2.0,
     fault_x = (690.0, 700.0), throw = 30.0,
     layer_bottoms = (24.0, 44.0, 84.0, 120.0),
     k_across = 0.01, k_along = 0.1, phi_fault = 0.10,
-    pad_cells = 7, pad_first = 20.0,
+    pad_cells = 7, pad_first = 20.0, fault_subcells = 1,
 ) = (; dx, dz, Lx, Ly, Lz, top_depth, dip_deg, fault_x, throw, layer_bottoms,
-       k_across, k_along, phi_fault, pad_cells, pad_first)
+       k_across, k_along, phi_fault, pad_cells, pad_first, fault_subcells)
 
 function footwall_facies(zr, layer_bottoms)
     for (f, zb) in enumerate(layer_bottoms)
@@ -67,7 +70,16 @@ function build_section(spec = section_spec())
     # Padding widths double each column (20, 40, ..., 1280 m by default, 2.54 km
     # per side), independent of the core cell size.
     pads = [pad_first * 2.0^(k - 1) for k in 1:pad_cells]
-    dxs = vcat(reverse(pads), fill(dx, nx), pads)
+    # Core columns; those inside the fault zone optionally split into sub-columns.
+    # (Specs saved before `fault_subcells` existed have no such field: treat as 1.)
+    nsub = get(spec, :fault_subcells, 1)
+    core_dxs = Float64[]
+    for i in 1:nx
+        xmid = (i - 0.5) * dx
+        inside = spec.fault_x[1] < xmid < spec.fault_x[2]
+        append!(core_dxs, inside ? fill(dx / nsub, nsub) : [dx])
+    end
+    dxs = vcat(reverse(pads), core_dxs, pads)
     x0 = -sum(pads; init = 0.0)
     nxt = length(dxs)
     mesh = reservoir_mesh((nxt, 1, nz), (dxs, [Ly], fill(dz, nz)), origin = [x0, 0.0, top_depth])
@@ -116,7 +128,7 @@ function print_section(sec; stride = 2, well_x = nothing)
     (; mesh, facies, spec, nz) = sec
     sym(f) = f == FAULT_FACIES ? '|' : FACIES[f].symbol
     pad = spec.pad_cells
-    nx = round(Int, spec.Lx / spec.dx)
+    nx = sec.nxt - 2 * pad      # core columns (more than Lx/dx if the fault is subdivided)
     grid = fill(' ', nz, sec.nxt)
     for c in eachindex(facies)
         I, _, K = cell_ijk(mesh, c)

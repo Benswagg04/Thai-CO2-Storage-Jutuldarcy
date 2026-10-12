@@ -1,0 +1,6 @@
+branch,co2_injected_t,peak_crest_bar,peak_drive_bar,pe_fault_bar,first_year_drive_gt_pe,co2_fault_y21_t,co2_beyond_y21_t,co2_beyond_y41_t,ch4_beyond_y21_t,ch4_beyond_y41_t,max_sg_fault,co2_max_resid_t,ch4_max_resid_t,ministeps_ok,ministeps_cut,wall_min
+a_methane_inject,15000.0,168.42,8.829,2.50,13,356.70,1770.29,2425.61,168.21,212.75,0.427,0.638,0.133,2337,1912,23.9
+b_co2scaled_inject,15000.0,168.30,7.739,1.50,13,437.51,1986.12,2783.89,159.88,201.17,0.482,0.940,0.099,1380,942,12.6
+c_co2scaled_control,0.0,103.39,0.740,1.50,never,0.00,0.00,0.00,0.00,0.00,0.000,0.000,0.141,394,0,0.7
+a_bhp_methane_inject,10966.0,153.10,8.829,2.50,13,244.20,1338.03,1581.05,139.34,162.66,0.418,0.797,0.179,1436,1019,14.9
+b_bhp_co2scaled_inject,11019.4,153.14,7.739,1.50,13,325.72,1498.73,1847.47,136.00,163.26,0.460,12.833,1.372,3409,3131,34.5

@@ -107,4 +107,11 @@ end
 fault_gas_beyond_seal(sec) = [c for c in eachindex(sec.facies)
     if sec.facies[c] == 1 || (sec.facies[c] == FAULT_FACIES && sec.zr[c] < sec.spec.layer_bottoms[1])]
 
-const SOLVER_KW = (relaxation = true, timestep_max_increase = 2.0, max_timestep = 30day)
+# tol_mb: JutulDarcy's mass-balance check is relative to the mass of the whole
+# model (~1.27e10 kg, mostly brine), so the default 1e-7 allows ~1.3 t of error per
+# time step in any component, including the ~1,000 t of CH4. 1e-10 brings the
+# no-injection control from a 1.95 t CH4 loss to 7 kg at no extra cost
+# (scripts/04d_conservation.jl), but stalls CO2 injection once gas enters the
+# fault (median step 0.14 day; 9.6 of 30 yr in 40 min). 1e-9 completes branch (a)
+# in 39 min vs 12 min at 1e-7 (scripts/04d_tolerance.jl, output/04d/tolerance*.log).
+const SOLVER_KW = (relaxation = true, timestep_max_increase = 2.0, max_timestep = 30day, tol_mb = 1e-9)
