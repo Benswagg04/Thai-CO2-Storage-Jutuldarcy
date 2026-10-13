@@ -1,6 +1,6 @@
 # Step 3b: Verification report
 
-Purpose: test whether the Step 3 conclusions survive numerical and physical scrutiny before moving to the compositional depleted-gas-field model (Step 4). This step was prompted by external review.
+Purpose: test whether the Step 3 conclusions survive numerical and physical scrutiny before moving to the compositional depleted-gas-field model (Step 4). This step was prompted by a critical review of Step 3.
 
 All numbers come from `results/03b_tables.md`, produced by `scripts/03b_report.jl` from the runs in `scripts/03b_verify.jl`.
 
@@ -92,7 +92,7 @@ Interpretation:
 - **The hypothesis is confirmed.** Doubling the rate (750 → 1,500) increases CO2 out of storage about 7×. At 2,500 t/yr it is about 24×.
 - At 750 t/yr, the peak entry drive (1.42 bar) barely exceeds Pe (1.4 bar). No free CO2 entered the fault; the 16 t out of storage is dissolved transport.
 - Only the highest rate moves free CO2 past the seal.
-- The post-injection entry drive returns to 1.08–1.10 bar in all three cases. So, as the reviewer cautioned, plume shapes differ, but the buoyancy loading on the fault after injection is essentially the same. The difference in outcome comes from injection overpressure.
+- The post-injection entry drive returns to 1.08–1.10 bar in all three cases. So, as anticipated in the review, plume shapes differ, but the buoyancy loading on the fault after injection is essentially the same. The difference in outcome comes from injection overpressure.
 - **Implication:** for a fault whose entry pressure lies within the injection window, the injection rate (not only the fault's properties) determines whether its seal is breached.
 
 ## 6. What the Step 3 conclusions can and cannot claim

@@ -1,6 +1,6 @@
 # CO2 storage in a faulted reservoir: JutulDarcy.jl simulations with verification
 
-**Author:** Paul Tivere Benjamin · **Status:** work in progress (October 2026). This README is a draft; the research claims for the depleted-gas-field part are not final.
+**Author:** Paul Tivere Benjamin · **Status:** ongoing learning project (October 2026). All models are simplified 2D cross-sections with synthetic properties; results describe mechanisms and numerical behaviour, not predictions for a specific site.
 
 A sequence of small, reproducible reservoir simulations in [JutulDarcy.jl](https://github.com/sintefmath/JutulDarcy.jl) (SINTEF), built step by step to learn compositional reservoir simulation. The focus is CO2 migration across and along a fault, in a saline aquifer and in a depleted gas field. Every step pairs a model with checks of its numerical and physical consistency, and the notes record what each check found, including corrections.
 
@@ -66,7 +66,7 @@ Simulation outputs (`output/`, Julia binary files of up to several hundred MB) a
 
 | File | Contents |
 |---|---|
-| `03_sweep_summary.csv` | Step 3: leakage, onset year and entry drive for all 36 fault scenarios |
+| `03_sweep_summary.csv` | Step 3: leakage (free and dissolved), 0.1% threshold year, first free-CO2 invasion of the fault, and entry drive for all 36 fault scenarios |
 | `03b_tables.md` | Step 3b verification tables: boundary transport and conservation, fault invasion vs seal crossing, injection rate at fixed mass, time step and grid |
 | `03c_fault_resolution.csv` | Step 3c: six Step 3 scenarios with 1 vs 5 fault columns |
 | `04a_co2_brine.csv`, `04a_ch4_water.csv` | Step 4A flash benchmark |
@@ -76,7 +76,7 @@ Simulation outputs (`output/`, Julia binary files of up to several hundred MB) a
 ## Layout
 - `src/`: model code (geometry, cases, run/verification helpers, gas-field fluid model)
 - `scripts/`: one script per step
-- `notes/`: reasoning, results, checks and corrections for each step
+- `notes/`: reasoning, results, checks and corrections for each step; `notes/walkthrough_04b_1d.md` is a guided walkthrough for running and modifying the 1D depleted gas model
 - `results/`, `figures/`: summary tables and figures (`figures/superseded/`: first-configuration figures from Steps 2–2b)
 
 ## Acknowledgements

@@ -70,4 +70,4 @@ MultiComponentFlash 1.1.19 (`src/eos/soreide_whitson.jl`, `soreide_whitson_hc_aq
 ## Open items needing the researcher
 - Confirm SW 1992 eq. 12 from the original paper (Fluid Phase Equilibria 77, 217–240).
 - Experimental CO2–NaCl solubility at 60–120 °C (our compiled database is the natural source) and CH4–water/brine data.
-- Decide whether to report the T_r issue to the MultiComponentFlash maintainers (a draft is in `notes/04a_upstream_issue_draft.md`).
+- ~~Decide whether to report the T_r issue to the MultiComponentFlash maintainers.~~ Resolved: the term is already corrected upstream (MultiComponentFlash 2.0.1); no issue to file. See `notes/04a_upstream_issue_draft.md`.

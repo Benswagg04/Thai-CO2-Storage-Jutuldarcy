@@ -1,6 +1,6 @@
 # Step 2c: Verification before the fault-property sweep
 
-Prompted by an external review of Steps 2 and 2b. Each item: what was checked, why, and the result.
+Prompted by a critical review of Steps 2 and 2b. Each item: what was checked, why, and the result.
 
 Steps 2 and 2b used a first configuration (no padding, closed top, Pc cap at 10 Pe). Their figures are kept in `figures/superseded/` for the record. The current scripts (`scripts/02_run_cases.jl`, `scripts/02_plot.jl`) produce the figures described here.
 
