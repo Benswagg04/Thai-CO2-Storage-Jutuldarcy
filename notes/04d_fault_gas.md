@@ -1,6 +1,6 @@
 # Stage B2c: CO2 injection into a faulted, depleted methane field
 
-Code: `src/gasfault.jl`, `scripts/04d_fault_gas.jl` (runs), `scripts/04d_report.jl` (tables and figures), `scripts/04d_conservation.jl` and `scripts/04d_tolerance.jl` (checks). Results: `results/04d_branches.csv`; figures `figures/04d_*.png`. Fluid: immiscible brine + CO2–CH4 Peng–Robinson. **Dissolution of CO2 or CH4 in brine is not modelled**; any "dissolved" quantity is *not modelled*, not zero.
+Code: `src/gasfault.jl`, `scripts/04d_fault_gas.jl` (runs), `scripts/04d_report.jl` (tables), `scripts/make_figures.jl 04d` (figures), `scripts/04d_conservation.jl` and `scripts/04d_tolerance.jl` (checks). Results: `results/04d_branches.csv`; figures `figures/04d_*.png`. Fluid: immiscible brine + CO2–CH4 Peng–Robinson. **Dissolution of CO2 or CH4 in brine is not modelled**; any "dissolved" quantity is *not modelled*, not zero.
 
 ## Question
 After a methane field next to a fault has been produced, does re-injected CO2 cross the fault seal, and how much of that depends on the switch from methane–brine to CO2–brine capillary properties (as opposed to injection itself)?

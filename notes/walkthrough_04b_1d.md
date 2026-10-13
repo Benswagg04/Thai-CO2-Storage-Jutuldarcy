@@ -15,7 +15,7 @@ r = run_1d(100)                             # one run, 100 cells (~1–3 min aft
 names, mb = mass_balance(r)
 pz_check(r, mb)
 ```
-`main()` runs the full script (two grids, figures). The first call in a fresh session is slow because Julia compiles the code.
+`main()` runs the full script (two grids; it saves the figure data, and `scripts/make_figures.jl 04b_` draws the figure). The first call in a fresh session is slow because Julia compiles the code.
 
 ## 1. The physics being solved
 For each component i (CO2, CH4, water), mass conservation in every cell:
