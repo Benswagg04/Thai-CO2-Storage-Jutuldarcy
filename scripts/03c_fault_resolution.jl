@@ -41,22 +41,30 @@ end
 
 # Same metrics as results/03_sweep_summary.csv, for 1 and 5 fault columns.
 outside(r) = [i[:injected] / 1000 for i in r.inventory] .- (r.acc.total[:fw_storage] .+ r.acc.total[:hw_storage])
+# threshold year: first year with > 0.1% of the injected CO2 outside the storage sand (free +
+# dissolved), a reporting threshold. First invasion: first year with > 0.01 t of free CO2 in the fault.
+const OUTSIDE_REGIONS = (:fault, :caprock, :overburden, :underburden)
 function metrics(r)
     inj = r.inventory[end][:injected] / 1000
     o = outside(r)
-    onset = findfirst(>(0.001 * inj), o)
+    thr = findfirst(>(0.001 * inj), o)
+    inv = findfirst(>(0.01), r.acc.free[:fault])
     d = filter(isfinite, r.diag.drive)
-    return (; out25 = 100 * o[25] / inj, out100 = 100 * o[end] / inj, onset = isnothing(onset) ? "none" : string(onset),
+    return (; out25 = 100 * o[25] / inj, out100 = 100 * o[end] / inj,
+        thr = isnothing(thr) ? "none" : string(thr), inv = isnothing(inv) ? "none" : string(inv),
+        free = 100 * sum(r.acc.free[k][end] for k in OUTSIDE_REGIONS) / inj,
+        diss = 100 * sum(r.acc.diss[k][end] for k in OUTSIDE_REGIONS) / inj,
         above = 100 * (r.acc.total[:overburden][end] + r.exited[end]) / inj, drive_max = maximum(d))
 end
-rows = ["pe_fault_bar,k_across_mD,k_along_mD,step3_regime,fault_columns,outside_pct_yr25,outside_pct_yr100,onset_year,above_seal_pct_yr100,drive_max_bar"]
-println("\nPe   | k across | regime                            | cols | outside % yr 25 / 100 | onset | above seal % | max drive")
+rows = ["pe_fault_bar,k_across_mD,k_along_mD,step3_regime,fault_columns,outside_pct_yr25,outside_pct_yr100,threshold_0p1pct_year,first_free_co2_in_fault_year,free_outside_pct_yr100,dissolved_outside_pct_yr100,above_seal_pct_yr100,drive_max_bar"]
+println("\nPe  | k across | regime                            | cols | outside % yr 25 / 100 | 0.1% yr | 1st free in fault | free / dissolved outside % | above seal % | max drive")
 for (pe, k, regime) in scenarios, (ncol, dir) in ((1, dir1), (nsub, dir5))
     f = joinpath(dir, "$(runname(pe, k)).jls"); isfile(f) || continue
     m = metrics(deserialize(f))
-    @printf("%.1f | %5.2f | %-33s | %2d | %7.3f / %7.3f | %5s | %7.3f | %.3f\n", pe, k[1], regime, ncol, m.out25, m.out100, m.onset, m.above, m.drive_max)
+    @printf("%.1f | %5.2f | %-33s | %2d | %7.3f / %7.3f | %5s | %5s | %7.3f / %6.3f | %7.3f | %.3f\n", pe, k[1], regime, ncol,
+        m.out25, m.out100, m.thr, m.inv, m.free, m.diss, m.above, m.drive_max)
     push!(rows, join([pe, k[1], k[2], "\"$regime\"", ncol, round(m.out25, digits = 3), round(m.out100, digits = 3),
-        m.onset, round(m.above, digits = 3), round(m.drive_max, digits = 3)], ","))
+        m.thr, m.inv, round(m.free, digits = 3), round(m.diss, digits = 3), round(m.above, digits = 3), round(m.drive_max, digits = 3)], ","))
 end
 out = joinpath(@__DIR__, "..", "results", "03c_fault_resolution.csv")
 write(out, join(rows, "\n") * "\n")

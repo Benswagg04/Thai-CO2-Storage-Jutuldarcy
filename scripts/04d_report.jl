@@ -123,6 +123,21 @@ open(joinpath(resdir, "04d_timeseries.csv"), "w") do io
 end
 println("written results/04d_timeseries.csv")
 
+# ---- Crossing of the sand–fault interface ----
+# Gas leaves the footwall storage sand almost only through the fault face (the caprock takes ≤ 1.2 t,
+# printed below), so CO2 outside the storage sand ≈ cumulative net crossing of that interface.
+# First invasion = first report year with > 0.01 t of CO2 in the fault (yearly resolution).
+println("\nCrossing of the sand–fault interface (CO2, t) and first invasion year")
+println("run | columns | first year CO2 in fault | crossed by yr 15 / 21 / 41 | max CO2 in caprock")
+for (n, _) in branches[1:2], (ncol, dir) in res_dirs
+    f = joinpath(dir, "$n.jls"); isfile(f) || continue
+    rows = deserialize(f).summary.rows
+    crossed(r) = r.co2_total - r.co2.fw_storage - r.co2.hw_storage
+    i = findfirst(r -> r.co2.fault > 0.01, rows)
+    @printf("%-20s | %2d | %s | %7.1f / %7.1f / %7.1f | %.3f\n", n, ncol, isnothing(i) ? "none" : @sprintf("%.0f", rows[i].year),
+        crossed(yr_at(rows, 15)), crossed(yr_at(rows, 21)), crossed(yr_at(rows, 41)), maximum(r -> r.co2.caprock, rows))
+end
+
 # ---- Figure 1: time series ------------------------------------------------------
 colors = Makie.wong_colors()
 fig = Figure(size = (1200, 800))

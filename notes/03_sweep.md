@@ -42,11 +42,11 @@ Three approximate regimes, set by where the fault's entry pressure sits relative
    - No free CO2 enters the fault. What remains (0.01–0.22%) is dissolved CO2 carried by brine flowing through the fault. It increases with fault permeability.
    - For the most permeable fault (1/10 mD), 0.13% reaches the overburden in solution even though the fault is a perfect capillary seal.
 
-**Entry pressure decides *whether* the fault leaks; permeability decides *how much*.** At Pe = 0.4 bar, leakage at year 100 is 4.8%, 31% and 62% for the three permeability levels.
+**Entry pressure decides *whether* the fault leaks; permeability decides *how much*.** (Approximately: the two interact, because permeability also shapes the pressure field and therefore whether the entry condition is reached; see Step 3c, tight-fault case.) At Pe = 0.4 bar, leakage at year 100 is 4.8%, 31% and 62% for the three permeability levels.
 
 ## Caveats
 - The threshold values (1.1 and ~1.7 bar) are specific to this geometry (an ~18 m column at the fault), this injection rate and these boundaries. The transferable result is the three-regime structure and its controls: column height sets the lower threshold, injection overpressure sets the window.
 - No molecular diffusion. The dissolved-CO2 leakage in regime 3 is advective only.
 - Pc is a single scalar curve per cell, so the fault's entry pressure does not differ between across-fault and along-fault directions.
 - The fault properties are prescribed values, not derived from geology (e.g. clay smear / PREDICT-type estimates).
-- **Fault resolution (added after Step 3c):** the sweep uses one cell across the 10 m fault. Rerunning six scenarios with five 2 m columns (`notes/03c_fault_resolution.md`) keeps the three regimes but shifts magnitudes both ways: injection-triggered leakage falls by 26–60% and starts later (the tight-fault case at Pe 1.2 joins the seal regime), persistent leakage rises by ~20%.
+- **Fault resolution (added after Step 3c):** the sweep uses one cell across the 10 m fault. Rerunning six scenarios with five 2 m columns (`notes/03c_fault_resolution.md`) keeps the three regimes but shifts magnitudes both ways: injection-triggered leakage falls by 26–60% (first free-CO2 invasion moves by only 1–2 years; the tight-fault case at Pe 1.2 stays below the 0.1% threshold), persistent leakage rises by ~20%. The "onset year" in `results/03_sweep_summary.csv` is now named `threshold_0p1pct_year` (first year with > 0.1% of the injected CO2 outside the storage sand, free + dissolved); the first year with free CO2 in the fault is reported separately.

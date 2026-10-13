@@ -67,7 +67,7 @@ One history, then branches restarted from the **same depleted state** (year 11):
 | (a′) capped | 10,966 | 153.1 | 8.8 / 2.5 | 13 | 1,338 / 1,581 | 14.4% | 163 |
 | (b′) capped | 11,019 | 153.1 | 7.7 / 1.5 | 13 | 1,499 / 1,847 | 16.8% | 163 |
 
-"Beyond the seal" = overburden sand plus fault cells above the footwall caprock top. The caprock itself is never invaded. CH4 beyond the seal is 14–18% of the 1,153 t left after depletion: injected CO2 pushes residual methane out first.
+"Beyond the seal" = overburden sand plus fault cells above the footwall caprock top. The caprock is essentially not invaded (≤ 1.2 t of CO2 in (b), where its entry pressure is also scaled by 0.6; 0 in (a)). CH4 beyond the seal is 14–18% of the 1,153 t left after depletion: injected CO2 pushes residual methane out first.
 
 **Answer to the planned question.**
 - **(b) − (c):** the control moves no gas at all, so all migration in (b) is caused by injection. The curve switch on its own causes none.
@@ -95,6 +95,17 @@ The entry drive is p_gas(crest) − p_brine(first fault cell). Split into p_brin
 - The single 10 m fault cell **overestimates leakage**: by ~45% for (a) and ~19% for (b), relative to 10 columns. The 5 → 10 change is 8% for (a) and 4% for (b), so the converged values are probably ~1,600 t and ~2,300 t.
 - **The curve-switch effect grows with resolution:** (b) − (a) = +358 t (1 column), +629 t (5), +676 t (10). The one-cell fault understates the importance of the CO2-vs-methane entry pressure.
 - Cost: the 10-column runs took 50 min (a) and 187 min (b), against 24 and 13 min with one column; the narrow fault cells force small time steps while gas moves through them.
+
+**Is the entry an artifact of where the fault pressure is sampled?** The entry drive above uses the first fault cell's centre, which moves closer to the face as the fault is refined. A more direct measure is the CO2 that has left the storage sand, which is the cumulative crossing of the sand–fault interface (the caprock takes ≤ 1.2 t):
+
+| | First year with CO2 in the fault: 1 / 5 / 10 columns | CO2 crossed by year 21: 1 / 5 / 10 columns (t) | by year 41 (t) |
+|---|---|---|---|
+| (a) methane curves | 13 / 12 / 12 | 2,091 / 1,616 / 1,484 | 2,460 / 1,850 / 1,703 |
+| (b) CO2-scaled | 13 / 12 / 12 | 2,372 / 2,139 / 2,053 | 2,831 / 2,488 / 2,388 |
+
+Gas enters at the same time, or one year earlier, when the fault is resolved. If the entry came only from sampling the fault pressure 5 m inside the fault, refinement would delay or prevent it. So the pressure-lag mechanism stands; refinement changes how much crosses (−16 to −31% by year 41), not whether or when.
+
+**Scope of the resolution test:** refinement is across the fault only (1, 5, 10 columns; fault pore volume and per-rock-type properties identical by construction). The vertical cell size (2 m) and the 10 m sand cells next to the fault were not refined, so this is approximate convergence in the fault-normal direction, not a full grid-convergence study.
 - **Consequence for Steps 2–3:** they used the same single-cell fault. Checked in Step 3c (`notes/03c_fault_resolution.md`): the bias goes both ways there, injection-triggered leakage overestimated (up to ~2.5×) but persistent leakage underestimated (~20%), because one wide cell also spreads the gas at low saturation and slows its flow up the fault.
 
 ## Predictions vs outcomes

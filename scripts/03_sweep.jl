@@ -41,19 +41,29 @@ end
 # Summary table (CSV), one row per run.
 outside(r) = [i[:injected] / 1000 for i in r.inventory] .-
              (r.acc.total[:fw_storage] .+ r.acc.total[:hw_storage])
-rows = ["pe_fault_bar,k_across_mD,k_along_mD,outside_pct_yr25,outside_pct_yr100,onset_year,above_seal_pct_yr100,left_top_pct_yr100,drive_max_bar,drive_yr25_bar,drive_yr100_bar,dp_max_bar"]
+# threshold_0p1pct_year: first year with > 0.1% of the injected CO2 outside the storage sand
+# (free + dissolved); a reporting threshold, not the first entry into the fault.
+# first_free_co2_in_fault_year: first year with > 0.01 t of free (CO2-rich phase) CO2 in the fault.
+# free/dissolved_outside: CO2 in the fault, caprock, overburden and underburden (CO2 that left
+# through the top is reported separately as left_top).
+const OUTSIDE_REGIONS = (:fault, :caprock, :overburden, :underburden)
+first_free_in_fault(r) = (i = findfirst(>(0.01), r.acc.free[:fault]); isnothing(i) ? "none" : i)
+free_outside(r) = sum(r.acc.free[k][end] for k in OUTSIDE_REGIONS)
+diss_outside(r) = sum(r.acc.diss[k][end] for k in OUTSIDE_REGIONS)
+rows = ["pe_fault_bar,k_across_mD,k_along_mD,outside_pct_yr25,outside_pct_yr100,threshold_0p1pct_year,first_free_co2_in_fault_year,free_outside_pct_yr100,dissolved_outside_pct_yr100,above_seal_pct_yr100,left_top_pct_yr100,drive_max_bar,drive_yr25_bar,drive_yr100_bar,dp_max_bar"]
 for k in k_levels, pe in pe_values
     f = joinpath(outdir, "$(runname(pe, k)).jls")
     isfile(f) || continue
     r = deserialize(f)
     inj = r.inventory[end][:injected] / 1000
     o = outside(r)
-    onset = findfirst(>(0.001 * inj), o)   # first year with > 0.1% outside
+    onset = findfirst(>(0.001 * inj), o)   # 0.1% reporting threshold (free + dissolved)
     above = r.acc.total[:overburden][end] + r.exited[end]
     d = filter(isfinite, r.diag.drive)
     push!(rows, join([pe, k[1], k[2],
         round(100 * o[25] / inj, digits = 3), round(100 * o[end] / inj, digits = 3),
-        isnothing(onset) ? "none" : onset,
+        isnothing(onset) ? "none" : onset, first_free_in_fault(r),
+        round(100 * free_outside(r) / inj, digits = 3), round(100 * diss_outside(r) / inj, digits = 3),
         round(100 * above / inj, digits = 3), round(100 * r.exited[end] / inj, digits = 3),
         round(maximum(d), digits = 3), round(r.diag.drive[25], digits = 3), round(r.diag.drive[end], digits = 3),
         round(maximum(r.diag.dp_max), digits = 3)], ","))
