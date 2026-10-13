@@ -172,35 +172,22 @@ function gravity_compare()
         r = gravity_case(g)
         out[g] = (r, report_gravity(r, g ? "gravity on" : "gravity off"))
     end
-    # Figure: CO2 mole fraction at end of injection and at the end, gravity on/off.
-    fig = Figure(size = (1200, 620))
-    for (col, g) in enumerate((true, false)), (row, y) in enumerate((21, 51))
-        r, rep = out[g]
-        ax = Axis3(fig[row, col], title = "Gravity $(g ? "on" : "off"), year $y: CO₂ mole fraction in gas",
-            zreversed = true, azimuth = 1.5π, elevation = 0.0, aspect = (1.0, 0.05, 0.25),
-            ylabelvisible = false, yticklabelsvisible = false, yticksvisible = false,
-            xgridvisible = false, ygridvisible = false, zgridvisible = false, xlabel = "x (m)", zlabel = "Depth (m)")
-        s = r.states[rep.ends[y]]
-        gas = findall(<(0.99), s[:Saturations][1, :])
-        plot_cell_data!(ax, r.m.mesh, s[:OverallMoleFractions][1, :], cells = gas,
-            colormap = :viridis, colorrange = (0, 1), shading = NoShading)
-    end
-    Colorbar(fig[1:2, 3], colormap = :viridis, colorrange = (0, 1), label = "z_CO₂ (gas cells only)")
-    save(joinpath(@__DIR__, "..", "figures", "04b2_gravity.png"), fig)
-
-    fig = Figure(size = (700, 420))
-    ax = Axis(fig[1, 1], title = "Mean depth of CO₂ minus mean depth of CH₄", xlabel = "Years", ylabel = "m (positive: CO₂ deeper)")
-    for (g, c) in ((true, :firebrick), (false, :steelblue))
+    # Light results for the figures (drawn by scripts/make_figures.jl, so they can be
+    # restyled without rerunning): composition maps and the CO2–CH4 depth separation.
+    fig_data = Dict{Bool, Any}()
+    for g in (true, false)
         r, rep = out[g]
         zc(s, j) = sum(s[:TotalMasses][j, :] .* rep.z) / sum(s[:TotalMasses][j, :])
-        ys = 11:maximum(r.report_ix)
-        lines!(ax, collect(ys), [zc(r.states[rep.ends[y]], 1) - zc(r.states[rep.ends[y]], 2) for y in ys],
-            color = c, linewidth = 2, label = "gravity $(g ? "on" : "off")")
+        ys = collect(11:maximum(r.report_ix))
+        maps = Dict(y => (zco2 = r.states[rep.ends[y]][:OverallMoleFractions][1, :],
+                          sw = r.states[rep.ends[y]][:Saturations][1, :]) for y in (21, 51))
+        fig_data[g] = (; maps, years = ys,
+            separation = [zc(r.states[rep.ends[y]], 1) - zc(r.states[rep.ends[y]], 2) for y in ys])
     end
-    vlines!(ax, [21], color = :gray, linestyle = :dot)
-    axislegend(ax, position = :lt)
-    save(joinpath(@__DIR__, "..", "figures", "04b2_segregation.png"), fig)
-    println("\nSaved figures/04b2_gravity.png, figures/04b2_segregation.png")
+    mkpath(joinpath(@__DIR__, "..", "output", "04b2"))
+    serialize(joinpath(@__DIR__, "..", "output", "04b2", "gravity_figdata.jls"),
+        (; data = fig_data, NX, NZ, L = 600.0, H = 60.0, top = 1500.0, slope = tand(3.0)))
+    println("\nSaved output/04b2/gravity_figdata.jls (figures: julia --project=. scripts/make_figures.jl 04b2)")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

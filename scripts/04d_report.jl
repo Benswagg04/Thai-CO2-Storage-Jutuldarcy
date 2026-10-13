@@ -1,9 +1,9 @@
-# Stage B2c report: tables and figures from output/04d/*.jls
+# Stage B2c report: tables from output/04d/*.jls (figures: scripts/make_figures.jl)
 # (run scripts/04d_fault_gas.jl runs, and runs_bhp, first).
 # Run from the project folder:  julia --project=. scripts/04d_report.jl
 
 include(joinpath(@__DIR__, "..", "src", "gasfault.jl"))
-using CairoMakie, Serialization, Printf
+using Serialization, Printf
 
 const OUT4D = joinpath(@__DIR__, "..", "output", "04d")
 figdir = joinpath(@__DIR__, "..", "figures"); mkpath(figdir)
@@ -138,70 +138,5 @@ for (n, _) in branches[1:2], (ncol, dir) in res_dirs
         crossed(yr_at(rows, 15)), crossed(yr_at(rows, 21)), crossed(yr_at(rows, 41)), maximum(r -> r.co2.caprock, rows))
 end
 
-# ---- Figure 1: time series ------------------------------------------------------
-colors = Makie.wong_colors()
-fig = Figure(size = (1200, 800))
-axp = Axis(fig[1, 1], title = "Pressure at the trap crest (solid) and opposite it across the fault (dashed)", xlabel = "year", ylabel = "bar")
-axd = Axis(fig[1, 2], title = "Entry drive p_gas(crest) − p_brine(fault)", xlabel = "year", ylabel = "bar")
-axc = Axis(fig[2, 1], title = "CO₂ beyond the seal", xlabel = "year", ylabel = "t")
-axm = Axis(fig[2, 2], title = "CH₄ beyond the seal", xlabel = "year", ylabel = "t")
-yd = [r.year for r in dep.summary.rows]
-lines!(axp, yd, [r.p_crest for r in dep.summary.rows], color = :black, label = "depletion")
-lines!(axp, yd, [r.p_hw_matched for r in dep.summary.rows], color = :black, linestyle = :dash)
-lines!(axd, yd, [r.drive for r in dep.summary.rows], color = :black)
-for (k, (n, l)) in enumerate(avail)
-    rows = B[n].summary.rows; y = [r.year for r in rows]
-    c = colors[k]
-    lines!(axp, y, [r.p_crest for r in rows], color = c, label = l)
-    lines!(axp, y, [r.p_hw_matched for r in rows], color = c, linestyle = :dash)
-    lines!(axd, y, [r.drive for r in rows], color = c)
-    lines!(axc, y, [r.co2.beyond_seal for r in rows], color = c)
-    lines!(axm, y, [r.ch4.beyond_seal for r in rows], color = c)
-end
-p0 = dep.summary.rows[1]
-hlines!(axd, [2.5], color = :gray40, linestyle = :dot); text!(axd, 0.5, 2.5, text = "fault Pe, methane curves (2.5)", fontsize = 10, align = (:left, :bottom))
-hlines!(axd, [1.5], color = :gray60, linestyle = :dot); text!(axd, 0.5, 1.5, text = "fault Pe, CO₂-scaled (1.5)", fontsize = 10, align = (:left, :top))
-vspan!(axd, 11, 21, color = (:gray, 0.1)); vspan!(axc, 11, 21, color = (:gray, 0.1)); vspan!(axm, 11, 21, color = (:gray, 0.1))
-Legend(fig[3, 1:2], axp, orientation = :horizontal, nbanks = 2, labelsize = 11, framevisible = false)
-Label(fig[4, 1:2], "Years 0–10 production, 10–11 shut-in, 11–21 CO₂ injection (shaded), 21–41 shut-in. Dissolution is not modelled.", fontsize = 11)
-save(joinpath(figdir, "04d_timeseries.png"), fig)
-
-# ---- Figure 2: gas saturation near the fault ----------------------------------------
-sec = build_section()
-near = findall(c -> sec.core[c] && 450 <= sec.xc[c] <= 950 && sec.zr[c] <= 90, eachindex(sec.facies))
-section_axis(pos, title) = Axis3(pos, title = title, titlesize = 12, titlegap = 30,
-    zreversed = true, azimuth = 1.5π, elevation = 0.0, aspect = (1.0, 0.05, 0.3),
-    xlabel = "x (m)", zlabel = "Depth (m)", protrusions = (60, 10, 10, 30),
-    ylabelvisible = false, yticklabelsvisible = false, yticksvisible = false,
-    xgridvisible = false, ygridvisible = false, zgridvisible = false)
-mapped = [(n, l) for (n, l) in avail if !isempty(B[n].maps)]
-fig = Figure(size = (1200, 260 * length(mapped) + 60))
-for (row, (n, l)) in enumerate(mapped), (col, y) in enumerate(sort(collect(keys(B[n].maps))))
-    ax = section_axis(fig[row, col], "$l: year $y")
-    plot_cell_data!(ax, sec.mesh, B[n].maps[y].Sg, cells = near, colormap = :inferno, colorrange = (0, 0.8), shading = NoShading)
-    plot_mesh_edges!(ax, sec.mesh, cells = findall(sec.facies .== FAULT_FACIES), color = :gray70)
-end
-Colorbar(fig[1:length(mapped), 3], colormap = :inferno, colorrange = (0, 0.8), label = "gas saturation")
-save(joinpath(figdir, "04d_gas_maps.png"), fig)
-println("figures written")
-
-# ---- Figure 3: fault resolution --------------------------------------------------
-if any(r -> r.ncol > 1, res_rows)
-    fig = Figure(size = (1200, 420))
-    axd = Axis(fig[1, 1], title = "Entry drive vs fault entry pressure", xlabel = "year", ylabel = "bar")
-    axc = Axis(fig[1, 2], title = "CO₂ beyond the seal", xlabel = "year", ylabel = "t")
-    styles = Dict(1 => :solid, 5 => :dash, 10 => :dot)
-    for r in res_rows
-        c = r.n == "a_methane_inject" ? colors[1] : colors[2]
-        y = [x.year for x in r.rows]
-        lab = (r.n == "a_methane_inject" ? "(a) methane curves" : "(b) CO₂-scaled") * ", $(r.ncol) column" * (r.ncol > 1 ? "s" : "")
-        lines!(axd, y, [x.drive for x in r.rows], color = c, linestyle = styles[r.ncol], label = lab)
-        lines!(axc, y, [x.co2.beyond_seal for x in r.rows], color = c, linestyle = styles[r.ncol])
-    end
-    hlines!(axd, [2.5], color = colors[1], linewidth = 0.8); hlines!(axd, [1.5], color = colors[2], linewidth = 0.8)
-    vspan!(axd, 11, 21, color = (:gray, 0.1)); vspan!(axc, 11, 21, color = (:gray, 0.1))
-    Legend(fig[1, 3], axd, labelsize = 10, framevisible = false)
-    Label(fig[2, 1:3], "Thin horizontal lines: fault entry pressure (2.5 bar methane curves, 1.5 bar CO₂-scaled). Shaded: CO₂ injection.", fontsize = 11)
-    save(joinpath(figdir, "04d_fault_resolution.png"), fig)
-    println("fault-resolution figure written")
-end
+println("
+Figures: julia --project=. scripts/make_figures.jl 04d")

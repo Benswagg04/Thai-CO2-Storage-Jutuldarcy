@@ -117,7 +117,8 @@ function build_section(spec = section_spec())
         end
     end
     core = (xc .> 0.0) .& (xc .< Lx)
-    return (; mesh, facies, perm, poro, spec, xc, zr, core, nxt, nz)
+    # x_edges and slope are returned for plotting cells as their true (tilted) shapes.
+    return (; mesh, facies, perm, poro, spec, xc, zr, core, nxt, nz, x_edges, slope)
 end
 
 "Column index (including padding) of the cell column that contains x."

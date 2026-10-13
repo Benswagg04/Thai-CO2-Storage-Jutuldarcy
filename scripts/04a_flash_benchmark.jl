@@ -13,7 +13,7 @@
 # Run from the project folder:  julia --project=. scripts/04a_flash_benchmark.jl
 # Writes results/04a_*.csv and figures/04a_*.png.
 
-using MultiComponentFlash, JutulDarcy, CairoMakie, Printf
+using MultiComponentFlash, JutulDarcy, Printf
 import JutulDarcy.CO2Properties: co2_brine_property_tables
 
 const R = 8.314462618
@@ -149,29 +149,5 @@ for S in salinities
 end
 write(joinpath(@__DIR__, "..", "results", "04a_ch4_water.csv"), join(rows, "\n") * "\n")
 
-# Figures.
-colors = Makie.wong_colors()
-fig = Figure(size = (1200, 420))
-ax1 = Axis(fig[1, 1], title = "CO₂ solubility, 95 °C", xlabel = "Pressure (bar)", ylabel = "mol CO₂ / kg water")
-ax2 = Axis(fig[1, 2], title = "Liquid (brine) density, 95 °C", xlabel = "Pressure (bar)", ylabel = "kg/m³")
-for (j, S) in enumerate(salinities)
-    r = co2[S]
-    lab = "$(Int(S)) mg/L"
-    lines!(ax1, pressures, [x.mTab for x in r], color = colors[j], linewidth = 2, label = "JutulDarcy tables, $lab")
-    scatterlines!(ax1, pressures, [x.mSW for x in r], color = colors[j], linestyle = :dash, label = "Søreide–Whitson, $lab")
-    lines!(ax2, pressures, [x.rhoTab for x in r], color = colors[j], linewidth = 2)
-    scatterlines!(ax2, pressures, [x.rhoSW for x in r], color = colors[j], linestyle = :dash)
-end
-axislegend(ax1, position = :rb, labelsize = 9)
-Label(fig[2, 1:2], "Solid: CO₂-brine correlations used in Steps 2–3. Dashed with markers: Søreide–Whitson (Peng–Robinson, no volume shift).", fontsize = 11)
-save(joinpath(@__DIR__, "..", "figures", "04a_co2_brine.png"), fig)
-
-fig = Figure(size = (700, 430))
-ax = Axis(fig[1, 1], title = "CH₄ solubility, 95 °C (Søreide–Whitson)", xlabel = "Pressure (bar)", ylabel = "mol CH₄ / kg water")
-for (j, S) in enumerate(salinities)
-    lines!(ax, pressures, ch4_pub[S], color = colors[j], linewidth = 2, label = "published Tr², $(Int(S)) mg/L")
-    lines!(ax, pressures, ch4_impl[S], color = colors[j], linestyle = :dash, label = "as implemented Tr, $(Int(S)) mg/L")
-end
-axislegend(ax, position = :lt, labelsize = 9)
-save(joinpath(@__DIR__, "..", "figures", "04a_ch4_water.png"), fig)
-println("\nWrote results/04a_co2_brine.csv, results/04a_ch4_water.csv, figures/04a_co2_brine.png, figures/04a_ch4_water.png")
+println("
+Wrote results/04a_co2_brine.csv, results/04a_ch4_water.csv (figures: julia --project=. scripts/make_figures.jl 04a)")

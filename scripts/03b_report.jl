@@ -1,9 +1,9 @@
-# Step 3b: tables and figures for the verification report, from output/03b/*.jls.
+# Step 3b: tables for the verification report, from output/03b/*.jls.
 # Run from the project folder:  julia --project=. scripts/03b_report.jl
-# Writes results/03b_tables.md and figures/03b_*.png.
+# Writes results/03b_tables.md (figures: scripts/make_figures.jl).
 
 include(joinpath(@__DIR__, "..", "src", "case.jl"))
-using CairoMakie, Serialization, Printf
+using Serialization, Printf
 
 dir = joinpath(@__DIR__, "..", "output", "03b")
 load(n) = (f = joinpath(dir, "$n.jls"); isfile(f) ? deserialize(f) : nothing)
@@ -68,33 +68,5 @@ end
 mkpath(joinpath(@__DIR__, "..", "results"))
 write(joinpath(@__DIR__, "..", "results", "03b_tables.md"), String(take!(io)))
 
-# Figures.
-figdir = joinpath(@__DIR__, "..", "figures")
-colors = Makie.wong_colors()
-fig = Figure(size = (1150, 420))
-ax1 = Axis(fig[1, 1], title = "Fault Pe 1.2 bar: CO₂ out of the storage formation", xlabel = "Years", ylabel = "Tonnes")
-ax2 = Axis(fig[1, 2], title = "Fault Pe 1.2 bar: cumulative net crossing of the seal", xlabel = "Years", ylabel = "Tonnes")
-for (j, (n, lab)) in enumerate([("grid10x2_pe1.2_mid", "10 × 2 m"), ("grid10x1_pe1.2_mid", "10 × 1 m"),
-                                ("grid5x2_pe1.2_mid", "5 × 2 m"), ("grid5x1_pe1.2_mid", "5 × 1 m"),
-                                ("dt30_pe1.2_mid", "10 × 2 m, max Δt 30 d")])
-    r = load(n); isnothing(r) && continue
-    ls = j == 5 ? :dash : :solid
-    lines!(ax1, r.years, r.out_of_storage, color = colors[j], linestyle = ls, linewidth = 2, label = lab)
-    lines!(ax2, r.years, r.crossed_seal, color = colors[j], linestyle = ls, linewidth = 2, label = lab)
-end
-axislegend(ax1, position = :rb, labelsize = 10)
-save(joinpath(figdir, "03b_grid_timestep.png"), fig)
-
-fig = Figure(size = (1150, 420))
-ax1 = Axis(fig[1, 1], title = "Same total mass, different rate (Pe 1.4 bar)", xlabel = "Years", ylabel = "CO₂ out of storage formation (t)")
-ax2 = Axis(fig[1, 2], title = "Entry drive at the fault (dashed: Pe = 1.4 bar)", xlabel = "Years", ylabel = "bar")
-for (j, (rate, yi)) in enumerate(rates)
-    r = load("rate$(rate)_pe1.4_mid"); isnothing(r) && continue
-    lines!(ax1, r.years, r.out_of_storage, color = colors[j], linewidth = 2, label = "$rate t/yr × $yi yr")
-    vlines!(ax1, [yi], color = colors[j], linestyle = :dot)
-    lines!(ax2, r.years, r.drive, color = colors[j], linewidth = 2)
-end
-hlines!(ax2, [1.4], color = :gray, linestyle = :dash)
-axislegend(ax1, position = :rb, labelsize = 10)
-save(joinpath(figdir, "03b_rate.png"), fig)
-println("\nWrote results/03b_tables.md, figures/03b_grid_timestep.png, figures/03b_rate.png")
+println("
+Wrote results/03b_tables.md (figures: julia --project=. scripts/make_figures.jl 03b)")

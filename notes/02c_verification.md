@@ -2,7 +2,7 @@
 
 Prompted by a critical review of Steps 2 and 2b. Each item: what was checked, why, and the result.
 
-Steps 2 and 2b used a first configuration (no padding, closed top, Pc cap at 10 Pe). Their figures are kept in `figures/superseded/` for the record. The current scripts (`scripts/02_run_cases.jl`, `scripts/02_plot.jl`) produce the figures described here.
+Steps 2 and 2b used a first configuration (no padding, closed top, Pc cap at 10 Pe). Their figures are kept in `figures/superseded/` for the record. The current scripts (`scripts/02_run_cases.jl`, then `scripts/make_figures.jl 02`) produce the figures described here.
 
 ## 1. Geometry defined in metres (prerequisite for grid refinement)
 - Fault position, throw, layer boundaries and well are now specified in metres, not grid indices, so a finer grid keeps the same geology (the fault stays 10 m wide).

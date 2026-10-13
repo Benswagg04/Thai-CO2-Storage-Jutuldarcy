@@ -141,27 +141,22 @@ function main()
         @printf("           average pressure at year 21: %.2f bar\n", sum(r.states[i][:Pressure] .* pv) / sum(pv) / bar)
     end
 
-    fig = Figure(size = (1200, 430))
-    ax1 = Axis(fig[1, 1], title = "Average reservoir pressure", xlabel = "Years", ylabel = "bar")
-    ax2 = Axis(fig[1, 2], title = "CO₂ mole fraction in the gas", xlabel = "Distance from injector (m)", ylabel = "z_CO₂")
-    colors = Makie.wong_colors()
-    for (j, nx) in enumerate((100, 400))
-        r, _ = results[nx]
+    # Light results for the figure (drawn by scripts/make_figures.jl, so it can be
+    # restyled without rerunning): pressure history, p/Z check, composition profiles.
+    fig_data = Dict{Int, Any}()
+    for nx in (100, 400)
+        r, mb = results[nx]
         pv = r.domain[:volumes] .* r.phi
         pavg = [sum(s[:Pressure] .* pv) / sum(pv) / bar for s in r.states]
-        lines!(ax1, r.t ./ yr, pavg, color = colors[j], linewidth = 2, label = "nx = $nx")
         x = r.domain[:cell_centroids][1, :]
-        for (y, ls) in ((r.years.deplete + r.years.shut1 + r.years.inject, :solid), (sum(r.years), :dash))
-            i = findlast(k -> r.report_ix[k] == y, eachindex(r.dts))
-            lines!(ax2, x, r.states[i][:OverallMoleFractions][1, :], color = colors[j], linestyle = ls,
-                label = "nx = $nx, year $y")
-        end
+        profiles = Dict(y => r.states[findlast(k -> r.report_ix[k] == y, eachindex(r.dts))][:OverallMoleFractions][1, :]
+            for y in (r.years.deplete + r.years.shut1 + r.years.inject, sum(r.years)))
+        fig_data[nx] = (; t_years = r.t ./ yr, pavg, x, profiles, years = r.years,
+            pz = nx == 100 ? pz_check(r, mb) : nothing)
     end
-    vlines!(ax1, [10, 11, 21], color = :gray, linestyle = :dot)
-    axislegend(ax1, position = :rb); axislegend(ax2, position = :rt, labelsize = 10)
-    mkpath(joinpath(@__DIR__, "..", "figures"))
-    save(joinpath(@__DIR__, "..", "figures", "04b_depletion_1d.png"), fig)
-    println("\nSaved figures/04b_depletion_1d.png")
+    mkpath(joinpath(@__DIR__, "..", "output", "04b"))
+    serialize(joinpath(@__DIR__, "..", "output", "04b", "depletion_1d_figdata.jls"), fig_data)
+    println("\nSaved output/04b/depletion_1d_figdata.jls (figure: julia --project=. scripts/make_figures.jl 04b_)")
     return results
 end
 

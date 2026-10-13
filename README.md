@@ -54,12 +54,14 @@ julia --project=. scripts/03c_fault_resolution.jl          # 6 runs with a 5-col
 julia --project=. scripts/04a_flash_benchmark.jl           # minutes
 julia --project=. scripts/04b_depletion_1d.jl              # minutes
 julia --project=. scripts/04b2_gas_2d.jl stability
+julia --project=. scripts/04b2_gas_2d.jl gravity             # gravity on/off comparison (figure data)
 julia --project=. scripts/04c_pc_check.jl                  # minutes
 julia --project=. scripts/04d_fault_gas.jl runs            # depletion + branches a, b, c: ~40 min
 julia --project=. scripts/04d_fault_gas.jl runs_bhp        # pressure-capped branches: ~50 min
 julia --project=. scripts/04d_fault_gas.jl runs_fault5     # 5-column fault: ~65 min
 julia --project=. scripts/04d_fault_gas.jl runs_fault10    # 10-column fault: ~4 h
-julia --project=. scripts/04d_report.jl                    # tables and figures from the runs above
+julia --project=. scripts/04d_report.jl                    # B2c tables from the runs above
+julia --project=. scripts/make_figures.jl                  # every figure in figures/, from saved results (no simulations)
 ```
 
 Simulation outputs (`output/`, Julia binary files of up to several hundred MB) are not version-controlled. The numbers behind every table and figure are, as plain CSV/Markdown in `results/`:
@@ -75,7 +77,7 @@ Simulation outputs (`output/`, Julia binary files of up to several hundred MB) a
 
 ## Layout
 - `src/`: model code (geometry, cases, run/verification helpers, gas-field fluid model)
-- `scripts/`: one script per step
+- `scripts/`: one script per step; `scripts/make_figures.jl` draws every figure from saved results with one shared style (`src/plotting.jl`: colour-blind-safe Okabe–Ito palette, cmocean colormaps, cross-sections drawn in 2D with the vertical exaggeration stated)
 - `notes/`: reasoning, results, checks and corrections for each step; `notes/walkthrough_04b_1d.md` is a guided walkthrough for running and modifying the 1D depleted gas model
 - `results/`, `figures/`: summary tables and figures (`figures/superseded/`: first-configuration figures from Steps 2–2b)
 
