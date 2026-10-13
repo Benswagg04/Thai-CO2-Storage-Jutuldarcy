@@ -95,7 +95,7 @@ The entry drive is p_gas(crest) − p_brine(first fault cell). Split into p_brin
 - The single 10 m fault cell **overestimates leakage**: by ~45% for (a) and ~19% for (b), relative to 10 columns. The 5 → 10 change is 8% for (a) and 4% for (b), so the converged values are probably ~1,600 t and ~2,300 t.
 - **The curve-switch effect grows with resolution:** (b) − (a) = +358 t (1 column), +629 t (5), +676 t (10). The one-cell fault understates the importance of the CO2-vs-methane entry pressure.
 - Cost: the 10-column runs took 50 min (a) and 187 min (b), against 24 and 13 min with one column; the narrow fault cells force small time steps while gas moves through them.
-- **Consequence for Steps 2–3:** they used the same single-cell fault (the 5 m grid of Step 3b had two cells), so their leakage magnitudes are probably overestimated too. Their regime boundaries should be rechecked with a resolved fault.
+- **Consequence for Steps 2–3:** they used the same single-cell fault. Checked in Step 3c (`notes/03c_fault_resolution.md`): the bias goes both ways there, injection-triggered leakage overestimated (up to ~2.5×) but persistent leakage underestimated (~20%), because one wide cell also spreads the gas at low saturation and slows its flow up the fault.
 
 ## Predictions vs outcomes
 | Prediction (made before the runs) | Outcome |

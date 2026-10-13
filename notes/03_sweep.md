@@ -49,3 +49,4 @@ Three approximate regimes, set by where the fault's entry pressure sits relative
 - No molecular diffusion. The dissolved-CO2 leakage in regime 3 is advective only.
 - Pc is a single scalar curve per cell, so the fault's entry pressure does not differ between across-fault and along-fault directions.
 - The fault properties are prescribed values, not derived from geology (e.g. clay smear / PREDICT-type estimates).
+- **Fault resolution (added after Step 3c):** the sweep uses one cell across the 10 m fault. Rerunning six scenarios with five 2 m columns (`notes/03c_fault_resolution.md`) keeps the three regimes but shifts magnitudes both ways: injection-triggered leakage falls by 26–60% and starts later (the tight-fault case at Pe 1.2 joins the seal regime), persistent leakage rises by ~20%.

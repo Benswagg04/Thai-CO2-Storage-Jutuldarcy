@@ -1,0 +1,13 @@
+pe_fault_bar,k_across_mD,k_along_mD,step3_regime,fault_columns,outside_pct_yr25,outside_pct_yr100,onset_year,above_seal_pct_yr100,drive_max_bar
+0.6,0.1,1.0,"persistent leakage",1,7.707,18.097,6,16.62,1.429
+0.6,0.1,1.0,"persistent leakage",5,8.527,22.112,8,20.745,1.267
+1.0,0.1,1.0,"near threshold",1,2.346,2.395,11,1.42,1.56
+1.0,0.1,1.0,"near threshold",5,1.724,1.778,14,0.932,1.436
+1.2,0.1,1.0,"injection-triggered",1,0.961,0.965,15,0.369,1.607
+1.2,0.1,1.0,"injection-triggered",5,0.517,0.517,19,0.134,1.494
+1.4,0.1,1.0,"injection-triggered (weak)",1,0.3,0.299,20,0.051,1.646
+1.4,0.1,1.0,"injection-triggered (weak)",5,0.122,0.119,25,0.005,1.551
+2.0,0.1,1.0,"capillary seal",1,0.042,0.041,none,0.007,1.707
+2.0,0.1,1.0,"capillary seal",5,0.07,0.069,none,0.004,1.594
+1.2,0.01,0.1,"injection-triggered, tight fault",1,0.15,0.149,22,0.006,1.598
+1.2,0.01,0.1,"injection-triggered, tight fault",5,0.076,0.073,none,-0.004,1.475

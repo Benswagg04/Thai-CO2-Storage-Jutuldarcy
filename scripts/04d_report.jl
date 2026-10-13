@@ -100,6 +100,29 @@ for (n, l) in branches[1:2], (ncol, dir) in res_dirs
         r15.dp_brine, r21.co2.beyond_seal, r41.co2.beyond_seal, r41.ch4.beyond_seal, maximum(r -> r.sg_max_fault, rows))
 end
 
+# ---- Year-by-year results for every run (plain CSV; output/*.jls are not version-controlled) ----
+open(joinpath(resdir, "04d_timeseries.csv"), "w") do io
+    regs = (:fw_storage, :hw_storage, :fault, :caprock, :beyond_seal)
+    println(io, "run,fault_columns,year,p_crest_bar,p_fault_bar,p_hw_matched_bar,dp_brine_bar,pc_crest_bar,drive_bar,pe_fault_bar,sg_max_fault,",
+        join(["co2_$(r)_t" for r in regs], ","), ",", join(["ch4_$(r)_t" for r in regs], ","),
+        ",co2_total_t,ch4_total_t,well_flow_total_t,co2_residual_t,ch4_residual_t")
+    function dump(name, ncol, rows; branch)
+        for r in rows
+            fl = branch ? sum(r.well_flow) : r.well_flow[2]              # branches: CO2 injected; depletion: CH4 (negative = produced)
+            res = branch ? r.residual .+ r.well_flow .- [sum(r.well_flow), 0.0, 0.0] : r.residual
+            @printf(io, "%s,%d,%.0f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.2f,%.4f,%s,%s,%.3f,%.3f,%.3f,%.4f,%.4f\n",
+                name, ncol, r.year, r.p_crest, r.p_fault, r.p_hw_matched, r.dp_brine, r.pc_crest, r.drive, r.pe_fault, r.sg_max_fault,
+                join([@sprintf("%.3f", getproperty(r.co2, g)) for g in regs], ","), join([@sprintf("%.3f", getproperty(r.ch4, g)) for g in regs], ","),
+                r.co2_total, r.ch4_total, fl, res[1], res[2])
+        end
+    end
+    dump("depletion", 1, dep.summary.rows; branch = false)
+    for (n, _) in branches, (ncol, dir) in res_dirs
+        f = joinpath(dir, "$n.jls"); isfile(f) && dump(n, ncol, deserialize(f).summary.rows; branch = true)
+    end
+end
+println("written results/04d_timeseries.csv")
+
 # ---- Figure 1: time series ------------------------------------------------------
 colors = Makie.wong_colors()
 fig = Figure(size = (1200, 800))
