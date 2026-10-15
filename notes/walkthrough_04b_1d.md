@@ -1,6 +1,6 @@
-# Walkthrough: the 1D depleted gas reservoir (Step 4B, stage 1)
+# Walkthrough: the 1D depleted gas reservoir (Step 4B, part 1)
 
-Goal: be able to run, explain and modify `scripts/04b_depletion_1d.jl` and `src/gas.jl` yourself. Work through it with the two files open side by side.
+A guide to running, understanding and modifying `scripts/04b_depletion_1d.jl` and `src/gas.jl`, written while I was learning JutulDarcy. It is easiest to follow with the two files open side by side.
 
 ## 0. Run it
 In a terminal in the project folder:
