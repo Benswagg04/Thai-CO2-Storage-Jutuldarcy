@@ -16,7 +16,7 @@
 
 ## Results (fault k_across = 0.01 mD, k_along = 0.1 mD)
 
-The model was in equilibrium (pressure drift 0.0000 bar over 5 years without wells), and the CO2 adds up: 37,500 t injected, 37,498 t in the model and 2 t out. The run took 34 s.
+The model was in equilibrium (pressure drift 0.0000 bar over 5 years without wells), and the CO2 adds up: 37,500 t injected, 37,498 t in the model and 2 t out. (I later realised this check is circular, because "out" is defined as the difference; Step 2c replaces it.) The run took 34 s.
 
 | CO2 (t) | Year 25 | Year 100 |
 |---|---|---|
