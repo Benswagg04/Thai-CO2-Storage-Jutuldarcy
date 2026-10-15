@@ -1,7 +1,7 @@
-# Stage B2c conservation check: rerun the no-injection control (branch c) from the
+# Step 4D conservation check: rerun the no-injection control (branch c) from the
 # depleted state and track the mass held inside the shut-in well as well as in the
 # reservoir. With closed boundaries and no well flow, reservoir + well must be constant.
-# Optional argument: tol_mb (default 1e-7, the JutulDarcy default; SOLVER_KW uses 1e-10). The MB check is
+# Optional argument: tol_mb (default 1e-7, the JutulDarcy default; SOLVER_KW uses 1e-9). The MB check is
 # relative to the mass of the whole model (~1.27e10 kg, mostly brine).
 # Run from the project folder:  julia --project=. scripts/04d_conservation.jl [tol_mb]
 

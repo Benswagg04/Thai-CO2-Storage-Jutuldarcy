@@ -1,4 +1,4 @@
-# Step 4B, stage 2: small 2D tilted gas reservoir with a gas–water contact.
+# Step 4B, part 2: small 2D tilted gas reservoir with a gas–water contact.
 #   a) "stability": equilibrium initial state, 10 years without wells. Nothing
 #      should move, with gravity on (hydrostatic initial pressure) and with
 #      gravity off (uniform initial pressure).

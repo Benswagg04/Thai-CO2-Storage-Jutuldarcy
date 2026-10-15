@@ -1,4 +1,4 @@
-# Step 4B, stage 1: one-dimensional depleted gas reservoir.
+# Step 4B, part 1: one-dimensional depleted gas reservoir.
 #   10 yr gas production at a fixed mass rate (with a bottom-hole pressure
 #   floor) → 1 yr shut-in → 10 yr CO2 injection → 10 yr shut-in.
 # Checks: component mass conservation (exact, per ministep), p/Z material

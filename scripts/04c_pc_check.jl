@@ -1,4 +1,4 @@
-# Step 4B, stage 2c-0: verify gas–water capillary pressure in the three-phase
+# Step 4C: verify gas–water capillary pressure in the three-phase
 # compositional model (immiscible brine + CO2–CH4 Peng–Robinson), JutulDarcy 0.3.10.
 #
 # In this system the reference pressure is the hydrocarbon-LIQUID phase (index

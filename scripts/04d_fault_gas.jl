@@ -1,4 +1,4 @@
-# Stage B2c: faulted depleted gas field.
+# Step 4D: faulted depleted gas field.
 #   equilibrium : capillary–gravity-consistent methane trap; 10 years without
 #                 wells, with methane-based (scale 1) and CO2-scaled (scale 0.6)
 #                 capillary curves. Must stay at rest; if the CO2-scaled curves

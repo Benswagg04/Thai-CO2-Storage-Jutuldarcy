@@ -1,4 +1,4 @@
-# Stage B2c: cost of the mass-balance tolerance in branch (a) (methane curves,
+# Step 4D: cost of the mass-balance tolerance in branch (a) (methane curves,
 # 1,500 t/yr for `inj_years`, then shut-in for `shut_years`), from the depleted state.
 # Prints one progress line per simulated year and stops after `wall_limit` minutes.
 # Needs output/04d/depletion.jls (scripts/04d_fault_gas.jl runs).

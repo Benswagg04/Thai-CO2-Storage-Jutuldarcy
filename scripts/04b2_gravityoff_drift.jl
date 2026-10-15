@@ -1,4 +1,4 @@
-# Quantify the water redistribution in the gravity-off no-well test (stage B2a):
+# Quantify the water redistribution in the gravity-off no-well test (Step 4B, part 2):
 # total water inventory, volume of water that moved across the initial
 # contact, and the shift of the gas–water contact.
 # Run from the project folder:  julia --project=. scripts/04b2_gravityoff_drift.jl

@@ -1,4 +1,4 @@
-# Step 4B, stage 2: solver-tuning experiment on the gravity-on 2D case.
+# Step 4B, part 2: solver-tuning experiment on the gravity-on 2D case.
 # Tolerances are kept at their defaults; only time stepping and nonlinear
 # update controls change. Each run records cost, where steps are cut, mass
 # conservation and the physical results (a time-step sensitivity check).

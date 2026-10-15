@@ -1,4 +1,4 @@
-# Stage B2c report: tables from output/04d/*.jls (figures: scripts/make_figures.jl)
+# Step 4D report: tables from output/04d/*.jls (figures: scripts/make_figures.jl)
 # (run scripts/04d_fault_gas.jl runs, and runs_bhp, first).
 # Run from the project folder:  julia --project=. scripts/04d_report.jl
 

@@ -1,4 +1,4 @@
-# Step 4B, stage 2: why are steps cut in the post-injection shut-in?
+# Step 4B, part 2: why are steps cut in the post-injection shut-in?
 # Runs the gravity-on case with relaxation + step growth ≤ 2× (the two settings
 # that helped), then reports cuts per year and checks whether a hydrocarbon
 # "liquid" phase ever appears (phase-label switching would destabilise Newton).

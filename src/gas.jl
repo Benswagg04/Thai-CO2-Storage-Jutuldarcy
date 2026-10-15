@@ -1,4 +1,4 @@
-# Depleted gas field fluid model (Step 4B, "Path B").
+# Depleted gas field fluid model (Step 4B; no dissolution, see notes/04b_depleted_gas_1d.md).
 #
 # Three phases: brine as a separate, immiscible aqueous phase, plus a CO2–CH4
 # mixture described by the Peng–Robinson equation of state (liquid and vapour

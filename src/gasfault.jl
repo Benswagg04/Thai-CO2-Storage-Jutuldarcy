@@ -1,4 +1,4 @@
-# Stage B2c: methane-filled footwall trap against the Step 3 fault, for depletion
+# Step 4D: methane-filled footwall trap against the Step 3 fault, for depletion
 # and CO2 re-injection. Fluid model: immiscible brine + CO2–CH4 Peng–Robinson
 # (src/gas.jl); dissolution of gas in brine is NOT modelled.
 #
